@@ -1,4 +1,5 @@
 #include "sort.h"
+
 /**
  * swap - swap two elements in array
  * @array: list of integers
@@ -7,53 +8,77 @@
  *
  * Return: integer
  */
-
-void swap(int *a, int *b)
+int swap(int *array, int x, int y)
 {
-	int t = *a;
-	*a = *b;
-	*b = t;
+	int tmp;
+
+	tmp = array[x];
+	array[x] = array[y];
+	array[y] = tmp;
+
+	return ((tmp == array[x]) ? 0 : 1);
 }
+
 /**
- * partition - second method
+ * partition - third method
  * @array: array
- * @low: int
- * @high: int
+ * @lower: int
+ * @higher: int
  * @size: size_t
  * Return: int
  */
-int partition(int array[], int low, int high)
+int partition(int *array, int lower, int higher, size_t size)
 {
+	int i = 0, j = 0, pivot = 0;
 
-	int pivot = array[high];
+	pivot = array[higher];
+	i = lower;
 
-	int i = (low - 1);
-
-	for (int j = low; j < high; j++)
+	for (j = lower; j < higher; ++j)
 	{
-		if (array[j] <= pivot)
+		if (array[j] < pivot)
 		{
-			i++;
-			swap(&array[i], &array[j]);
+			if (swap(array, i, j) == 1)
+				print_array(array, size);
+
+			++i;
 		}
 	}
-	swap(&array[i + 1], &array[high]);
-	return (i + 1);
+
+	if (swap(array, i, higher) == 1)
+		print_array(array, size);
+
+	return (i);
 }
+
+/**
+ * quick_sort_rec - second method
+ * @array: array
+ * @lower: int
+ * @higher: int
+ * @size: size_t
+ */
+void quick_sort_rec(int *array, int lower, int higher, size_t size)
+{
+	int l_p = 0;
+
+	if (lower < higher)
+	{
+		l_p = partition(array, lower, higher, size);
+		quick_sort_rec(array, lower, l_p - 1, size);
+		quick_sort_rec(array, l_p + 1, higher, size);
+	}
+}
+
 /**
  * quick_sort - sort method
  * @array: array
- * @low: int
- * @high: int
+ * @size: size_t
  */
 void quick_sort(int *array, size_t size)
 {
-	int low, high;
+	if (size < 2)
+		return;
 
-	if (low < high)
-	{
-		int pi = partition(array, low, high);
-		quick_sort(array, low, pi - 1);
-		quick_sort(array, pi + 1, high);
-	}
+	quick_sort_rec(array, 0, size - 1, size);
 }
